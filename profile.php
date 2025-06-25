@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     <button type="submit" class="btn btn-purple">Mettre à jour</button>
   </form>
 
-  <h2 class="mb-4 text-purple">Changer mon mot de passe</h2>
+  <h2 class="mb-4 text-purple">Changer de mot de passe</h2>
   <form method="post" class="bg-white p-4 rounded shadow" autocomplete="off">
     <input type="hidden" name="change_password" value="1" />
     <div class="mb-3">

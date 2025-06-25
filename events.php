@@ -1,52 +1,18 @@
 <?php
-if (session_status()==PHP_SESSION_NONE)
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    // On mémorise la page demandée dans la session
     $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
     header('Location: login.php');
     exit;
 }
 
-$accessKey = '7oQvM8MBK3uzNSxw1FWEKeAtxfqn_YywjXnZM0dLKmc';
+require_once 'functions.php';
 
+$eventbriteToken = 'TOFZBXFUQQXETDXG6SFH';
+$searchCity = isset($_GET['ville']) ? trim($_GET['ville']) : '';
 
-
-// Fonction pour obtenir une image aléatoire depuis Unsplash en fonction du titre
-function getUnsplashImageUrl($query, $accessKey) {
-    $url = "https://api.unsplash.com/photos/random?query=" . urlencode($query) . "&client_id=" . $accessKey . "&orientation=landscape";
-
-    $opts = [
-        "http" => [
-            "method" => "GET",
-            "header" => "Accept: application/json\r\n"
-        ],
-        "ssl" => [
-            "verify_peer" => false,
-            "verify_peer_name" => false,
-        ],
-    ];
-
-    $context = stream_context_create($opts);
-    $response = @file_get_contents($url, false, $context);
-
-    if (!$response) return null;
-
-    $data = json_decode($response, true);
-    return $data['urls']['regular'] ?? null;
-}
-
-// Charger les événements depuis le JSON
-$events = json_decode(file_get_contents(__DIR__ . '/data/events.json'), true);
-
-// Filtrer les événements si une ville est précisée
-$search = isset($_GET['ville']) ? strtolower(trim($_GET['ville'])) : '';
-if ($search !== '') {
-    $events = array_filter($events, function ($event) use ($search) {
-        return strpos(strtolower($event['lieu']), $search) !== false;
-    });
-}
+$events = fetchEventbriteEvents($eventbriteToken, $searchCity);
 ?>
 
 <!DOCTYPE html>
@@ -66,12 +32,10 @@ if ($search !== '') {
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
-        <li class="nav-item"><a class="nav-link" href="events.php">Événements</a></li>
-
+        <li class="nav-item"><a class="nav-link active" href="events.php">Événements</a></li>
         <?php if (isset($_SESSION['user_id'])): ?>
           <li class="nav-item"><a class="nav-link" href="profile.php">Profil</a></li>
           <li class="nav-item"><a class="nav-link" href="logout.php">Déconnexion</a></li>
@@ -79,12 +43,7 @@ if ($search !== '') {
           <li class="nav-item"><a class="nav-link" href="login.php">Connexion</a></li>
           <li class="nav-item"><a class="nav-link" href="register.php">Inscription</a></li>
         <?php endif; ?>
-        
       </ul>
-    </div>
-  </div>
-</nav>
-
     </div>
   </div>
 </nav>
@@ -97,30 +56,29 @@ if ($search !== '') {
 </section>
 
 <div class="container my-5">
-  <!-- Barre de recherche -->
   <form method="get" class="mb-4">
     <div class="input-group">
-      <input type="text" name="ville" class="form-control" placeholder="Rechercher une ville..." value="<?= htmlspecialchars($search) ?>" />
+      <input type="text" name="ville" class="form-control" placeholder="Rechercher une ville..." value="<?= htmlspecialchars($searchCity) ?>" />
       <button class="btn btn-purple" type="submit">Rechercher</button>
     </div>
   </form>
 
-  <!-- Résultats -->
-  <div class="row">
+  <div class="row" id="eventsContainer">
     <?php if (!empty($events)): ?>
       <?php foreach ($events as $event): ?>
         <?php
-          $imageUrl = getUnsplashImageUrl($event['titre'], $accessKey);
-          if (!$imageUrl) $imageUrl = 'img/fallback.jpg';
+          $title = $event['name']['text'] ?? 'Titre indisponible';
+          $date = isset($event['start']['local']) ? date('Y-m-d H:i', strtotime($event['start']['local'])) : 'Date non spécifiée';
+          $venue = $event['venue']['address']['localized_address_display'] ?? 'Lieu non spécifié';
+          $imageUrl = $event['logo']['url'] ?? 'img/fallback.jpg';
         ?>
         <div class="col-md-4 mb-4">
           <div class="card shadow-sm h-100">
-            <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($event['titre']) ?>" class="card-img-top" style="object-fit: cover; height: 200px;" />
+            <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($title) ?>" class="card-img-top" style="object-fit: cover; height: 200px;" />
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title"><?= htmlspecialchars($event['titre']) ?></h5>
-              <p class="card-text"><strong>Lieu :</strong> <?= htmlspecialchars($event['lieu']) ?></p>
-              <p class="card-text"><strong>Date :</strong> <?= htmlspecialchars($event['date']) ?></p>
-              <p class="card-text flex-grow-1"><?= htmlspecialchars($event['description']) ?></p>
+              <h5 class="card-title"><?= htmlspecialchars($title) ?></h5>
+              <p class="card-text"><strong>Lieu :</strong> <?= htmlspecialchars($venue) ?></p>
+              <p class="card-text"><strong>Date :</strong> <?= htmlspecialchars($date) ?></p>
               <a href="event-details.php?id=<?= urlencode($event['id']) ?>" class="btn btn-outline-purple mt-auto">Voir détails</a>
             </div>
           </div>

@@ -1,5 +1,5 @@
 <?php
-// db.php — Connexion à la base de données 
+//  Connexion à la base de données 
 
 $host = 'localhost';
 $dbname = 'eventmatch'; 

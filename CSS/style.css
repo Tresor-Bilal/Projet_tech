@@ -130,6 +130,12 @@ body {
 }
 
 /* --- FORMULAIRES --- */
+form {
+  max-width: 600px;
+  margin: 0 auto; /* centre le formulaire lui-même */
+  padding: 20px;
+}
+
 form fieldset {
   border: none;
   padding: 20px;
@@ -142,10 +148,14 @@ form legend {
   font-size: 1.8rem;
   margin-bottom: 20px;
   color: var(--purple);
+  text-align: center;
 }
 
 form label {
+  display: block;
   font-weight: 500;
+  margin-bottom: 6px;
+  text-align: left;
 }
 
 form input[type="text"],
@@ -154,10 +164,10 @@ form input[type="tel"],
 form input[type="password"],
 form input[type="date"],
 form select {
-  width: 100%;
+  display: block;
+  width: 100%; /* occupe toute la largeur dispo du form (ou presque) */
   padding: 12px;
-  margin-top: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: var(--border-radius);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -167,7 +177,6 @@ form input[type="radio"],
 form input[type="checkbox"] {
   margin-right: 6px;
 }
-
 /* --- CARDS D'ÉVÉNEMENTS --- */
 .card-title {
   color: var(--purple);

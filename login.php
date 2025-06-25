@@ -16,11 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && password_verify($mot_de_passe, $user['mot_de_passe'])) {
-            // ✅ On stocke l'identifiant pour vérification future
+            //  On stocke l'identifiant pour vérification future
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user'] = $user['prenom']; // pour affichage éventuel
 
-            // ✅ Redirection vers la page précédemment demandée
+            //  Redirection vers la page précédemment demandée
             $redirect = $_SESSION['redirect_after_login'] ?? 'index.php';
             unset($_SESSION['redirect_after_login']);
             header("Location: $redirect");
@@ -94,12 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <div class="mb-3">
         <label for="email" class="form-label">E-mail</label>
-        <input type="email" id="email" name="email" class="form-control" autocomplete="email" required />
+        <input type="email" id="email" name="email" class="form-control" autocomplete="off" required />
       </div>
 
       <div class="mb-3">
         <label for="password" class="form-label">Mot de passe</label>
-        <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" required />
+        <input type="password" id="password" name="password" class="form-control" autocomplete="new-password" required />
       </div>
 
       <div class="d-flex justify-content-between align-items-center">
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
 
         </div>
-            <a href="register.php">N'avez-vous pas de compte ?</a>
+            <p>N'avez-vous pas de compte? <a href="register.php" class="btn btn-outline-secondary" >Cliquez ici</a></p>
       </div>
     </fieldset>
   </form>

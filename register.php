@@ -1,8 +1,11 @@
 <?php
 require_once 'db.php'; // fichier de connexion à la base de données
 
-$nom = $prenom =$email = $date =$password = $sexe = $phone = '';
-$errors = ['nom' => '', 'prenom' => '','email' => '', 'date' =>'','password' => '', 'sexe' => '', 'phone' => '' ];
+$nom = $prenom = $email = $date = $password = $sexe = $phone = '';
+$errors = [
+  'nom' => '', 'prenom' => '', 'email' => '', 'date' => '',
+  'password' => '', 'sexe' => '', 'phone' => ''
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom']);
@@ -19,21 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['nom'] = "Veuillez saisir votre nom.";
         $valid = false;
     }
-
     if (empty($prenom)) {
-      $errors['prenom'] = "Veuillez saisir votre prénom.";
-      $valid = false;
-  }
-
+        $errors['prenom'] = "Veuillez saisir votre prénom.";
+        $valid = false;
+    }
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = "Adresse e-mail invalide.";
         $valid = false;
     }
-
     if (empty($password)) {
-      $errors['password'] = "Veuillez saisir un mot de passe.";
-      $valid = false;
-  }
+        $errors['password'] = "Veuillez saisir un mot de passe.";
+        $valid = false;
+    }
     if (empty($date)) {
         $errors['date'] = "Veuillez saisir votre date de naissance.";
         $valid = false;
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             try {
-                $insert = $pdo->prepare("INSERT INTO utilisateurs (nom,prenom, email,date_naissance, mot_de_passe,civilite, phone) VALUES (?,?,?,?,?, ?, ?)");
-                $insert->execute([$nom, $prenom , $email, $date ,$hashedPassword, $sexe, $phone]);
+                $insert = $pdo->prepare("INSERT INTO utilisateurs (nom, prenom, email, date_naissance, mot_de_passe, civilite, phone) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $insert->execute([$nom, $prenom, $email, $date, $hashedPassword, $sexe, $phone]);
                 header("Location: login.php?inscription=success");
                 exit;
             } catch (PDOException $e) {
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </section>
 
 <div class="container my-5">
-  <form method="POST" class="bg-white p-4 rounded shadow-sm">
+  <form method="POST" class="bg-white p-4 rounded shadow-sm" autocomplete="off">
     <fieldset>
       <legend class="text-purple">Créer un compte</legend>
 
@@ -109,8 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="sexe" id="sexe_m" value="Monsieur" <?= ($sexe === 'Monsieur') ? 'checked' : '' ?>>
           <label class="form-check-label" for="sexe_m">Homme</label>
-      </div>
-
+        </div>
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="sexe" id="sexe_f" value="Madame" <?= ($sexe === 'Madame') ? 'checked' : '' ?>>
           <label class="form-check-label" for="sexe_f">Femme</label>
@@ -125,21 +124,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div class="mb-3">
-        <label for="prenom" class="form-label">Prenom</label>
+        <label for="prenom" class="form-label">Prénom</label>
         <input type="text" id="prenom" name="prenom" class="form-control" value="<?= htmlspecialchars($prenom) ?>" required>
         <small class="text-danger"><?= $errors['prenom'] ?></small>
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">Adresse e-mail</label>
-        <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($email) ?>" required>
-        <small class="text-danger"><?= $errors['email'] ?></small>
       </div>
 
       <div class="mb-3">
         <label for="date" class="form-label">Date de naissance</label>
         <input type="date" id="date" name="date" class="form-control" value="<?= htmlspecialchars($date) ?>" required>
         <small class="text-danger"><?= $errors['date'] ?></small>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Adresse e-mail</label>
+        <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($email) ?>" required autocomplete="off">
+        <small class="text-danger"><?= $errors['email'] ?></small>
       </div>
 
       <div class="mb-3">
@@ -150,8 +149,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <div class="mb-3">
         <label for="password" class="form-label">Mot de passe</label>
-        <input type="password" id="password" name="password" class="form-control" required>
+        <input type="password" id="password" name="password" class="form-control" required autocomplete="new-password">
         <small class="text-danger"><?= $errors['password'] ?></small>
+      </div>
+
+      <!-- Case affichée uniquement pour le design -->
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="contact_ok" name="contact_ok">
+        <label class="form-check-label" for="contact_ok">J'accepte d'être contacté pour les prochains événements</label>
       </div>
 
       <div class="d-grid">
