@@ -1,78 +1,29 @@
 <?php
-// functions.php
+
+// clé API Unsplash
+$accessKey = '7oQvM8MBK3uzNSxw1FWEKeAtxfqn_YywjXnZM0dLKmc';
 
 /**
- * Récupère une liste d'événements depuis Eventbrite
- * @param string $token Clé API Eventbrite valide
- * @param string $location (optionnel) Adresse / ville pour filtrer
- * @return array Tableau d'événements ou tableau vide en cas d'erreur
+ * Récupère une image aléatoire Unsplash selon une recherche
+ * @param string $query
+ * @param string $accessKey
+ * @return string|null URL de l'image ou null si erreur
  */
-function fetchEventbriteEvents(string $token, string $location = ''): array {
-    $url = 'https://www.eventbriteapi.com/v3/events/search/?expand=venue,logo&sort_by=date';
-
-    if (!empty($location)) {
-        $url .= '&location.address=' . urlencode($location);
-    }
-
-    $headers = [
-        'Authorization: Bearer ' . $token,
-        'Accept: application/json',
-    ];
+function getUnsplashImageUrl($query, $accessKey) {
+    $url = "https://api.unsplash.com/photos/random?query=" . urlencode($query) . "&client_id=" . $accessKey . "&orientation=landscape";
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
     $response = curl_exec($ch);
 
     if (curl_errno($ch)) {
         curl_close($ch);
-        return [];
+        return null; // erreur réseau
     }
     curl_close($ch);
 
     $data = json_decode($response, true);
-
-    if (!isset($data['events']) || !is_array($data['events'])) {
-        return [];
-    }
-
-    return $data['events'];
+    return $data['urls']['regular'] ?? null;
 }
-
-/**
- * Récupère les détails d'un événement par ID
- * @param string $id ID de l'événement
- * @param string $token Clé API Eventbrite
- * @return array|null Détails de l'événement ou null en cas d'erreur
- */
-function fetchEventDetailsFromEventbrite(string $id, string $token): ?array {
-    $url = 'https://www.eventbriteapi.com/v3/events/' . urlencode($id) . '/?expand=venue,logo';
-
-    $headers = [
-        'Authorization: Bearer ' . $token,
-        'Accept: application/json',
-    ];
-
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    $response = curl_exec($ch);
-
-    if (curl_errno($ch)) {
-        curl_close($ch);
-        return null;
-    }
-
-    curl_close($ch);
-
-    $data = json_decode($response, true);
-
-    if (isset($data['error'])) {
-        return null;
-    }
-
-    return $data;
-}
-?>

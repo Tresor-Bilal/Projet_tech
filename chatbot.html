@@ -1,0 +1,582 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super 5 - Chatbot Intelligent</title>
+  <style>
+    /* Variables CSS pour les couleurs et ombres */
+    :root {
+      --mauve-primary: #9b59b6;
+      --mauve-secondary: #8e44ad;
+      --mauve-dark: #7d3c98;
+      --mauve-light: #bb8fce;
+      --mauve-pale: #f4f1f8;
+      --white: #ffffff;
+      --gray-light: #f8f9fa;
+      --gray-medium: #e9ecef;
+      --gray-dark: #6c757d;
+      --shadow: rgba(155, 89, 182, 0.3);
+    }
+
+    /* Réinitialisation de la boîte de modèle pour tous les éléments */
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Styles généraux du corps de la page */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--mauve-pale) 0%, var(--white) 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* Styles du titre principal */
+    h1 {
+      color: var(--mauve-dark);
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px var(--shadow);
+    }
+
+    /* Styles des paragraphes */
+    p {
+      color: var(--gray-dark);
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    /* Styles du bouton flottant du chatbot */
+    #super5-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--mauve-primary), var(--mauve-secondary));
+      border: none;
+      border-radius: 50%;
+      width: 65px;
+      height: 65px;
+      box-shadow: 0 6px 20px var(--shadow);
+      cursor: pointer;
+      color: white;
+      font-size: 32px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    /* Effet au survol du bouton */
+    #super5-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px var(--shadow);
+      background: linear-gradient(135deg, var(--mauve-secondary), var(--mauve-dark));
+    }
+
+    /* Animation de pulsation pour le bouton */
+    @keyframes pulse {
+      0% { box-shadow: 0 6px 20px var(--shadow); }
+      50% { box-shadow: 0 6px 30px rgba(155, 89, 182, 0.5); }
+      100% { box-shadow: 0 6px 20px var(--shadow); }
+    }
+
+    /* Styles de la fenêtre du chatbot */
+    #super5-chat {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 380px;
+      height: 500px;
+      background: var(--white);
+      border: 3px solid var(--mauve-primary);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px var(--shadow);
+      display: none; /* Caché par défaut */
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 999;
+      backdrop-filter: blur(10px); /* Effet de flou derrière la fenêtre */
+    }
+
+    /* Styles de l'en-tête du chat */
+    .chat-header {
+      background: linear-gradient(135deg, var(--mauve-primary), var(--mauve-secondary));
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      border-bottom: 2px solid var(--mauve-light);
+    }
+
+    /* Styles de la zone des messages */
+    #chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      font-family: inherit;
+      font-size: 14px;
+      background: var(--gray-light);
+      scrollbar-width: thin;
+      scrollbar-color: var(--mauve-light) transparent;
+    }
+
+    /* Styles de la barre de défilement pour Webkit (Chrome, Safari) */
+    #chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #chat-messages::-webkit-scrollbar-thumb {
+      background: var(--mauve-light);
+      border-radius: 3px;
+    }
+
+    /* Styles généraux des messages */
+    .message {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 15px;
+      max-width: 85%;
+      word-wrap: break-word;
+      animation: fadeIn 0.4s ease;
+      line-height: 1.4;
+    }
+
+    /* Styles des messages de l'utilisateur */
+    .user-message {
+      background: linear-gradient(135deg, var(--mauve-primary), var(--mauve-secondary));
+      color: white;
+      margin-left: auto;
+      text-align: right;
+      border-bottom-right-radius: 5px;
+    }
+
+    /* Styles des messages du bot */
+    .bot-message {
+      background: var(--white);
+      color: var(--gray-dark);
+      border: 1px solid var(--mauve-light);
+      margin-right: auto;
+      border-bottom-left-radius: 5px;
+    }
+
+    /* Styles des étiquettes de message (Moi, Super 5, Recherche) */
+    .message-label {
+      font-weight: bold;
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    /* Styles de l'indicateur de recherche */
+    .search-indicator {
+      background: #e8f4fd;
+      color: #1565c0;
+      border: 1px solid #bbdefb;
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    /* Animation d'apparition des messages */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Animation des points de suspension pour l'indicateur de pensée */
+    @keyframes thinking {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
+
+    /* Styles des points de suspension de l'indicateur de pensée */
+    .thinking-dots {
+      display: inline-block;
+      animation: thinking 1.4s infinite;
+    }
+
+    .thinking-dots::after {
+      content: '...';
+      animation: thinking 1.4s infinite;
+    }
+
+    /* Styles de la zone de saisie du chat */
+    #chat-input {
+      display: flex;
+      border-top: 2px solid var(--mauve-light);
+      background: var(--white);
+    }
+
+    /* Styles du champ de saisie */
+    #chat-input input {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      background: transparent;
+      color: var(--gray-dark);
+    }
+
+    /* Styles du placeholder du champ de saisie */
+    #chat-input input::placeholder {
+      color: var(--gray-medium);
+    }
+
+    /* Styles du bouton d'envoi */
+    #chat-input button {
+      padding: 15px 20px;
+      background: linear-gradient(135deg, var(--mauve-primary), var(--mauve-secondary));
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border-radius: 0 0 17px 0;
+    }
+
+    /* Effet au survol du bouton d'envoi */
+    #chat-input button:hover {
+      background: linear-gradient(135deg, var(--mauve-secondary), var(--mauve-dark));
+      transform: scale(1.05);
+    }
+
+    /* Styles du bouton d'envoi désactivé */
+    #chat-input button:disabled {
+      background: var(--gray-medium);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Styles de l'indicateur de saisie (typing indicator) */
+    .typing-indicator {
+      display: none; /* Caché par défaut */
+      padding: 12px 15px;
+      color: var(--gray-dark);
+      font-style: italic;
+      font-size: 12px;
+      background: rgba(155, 89, 182, 0.1);
+    }
+
+    /* Media queries pour les petits écrans */
+    @media (max-width: 480px) {
+      #super5-chat {
+        width: calc(100vw - 40px);
+        right: 20px;
+        left: 20px;
+        height: 450px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Contenu du site -->
+
+<!-- Bouton du chatbot -->
+<button id="super5-btn" title="Ouvrir le chatbot Super 5">🤖</button>
+
+<!-- Fenêtre du chatbot -->
+<div id="super5-chat">
+  <div class="chat-header">
+    🤖 Super 5 - IA avec Recherche Web
+  </div>
+  <div id="chat-messages">
+    <div class="message bot-message">
+      <div class="message-label">Super 5</div>
+      Salut ! Je suis Super 5, ton assistant IA intelligent. Je peux chercher des informations actuelles sur internet pour répondre à tes questions ! 🔍✨
+      <br><br>
+      <strong>Exemples :</strong><br>
+      • "Événements musicaux à Paris cette semaine"<br>
+      • "Actualités technologie aujourd'hui"<br>
+      • "Météo demain"<br>
+      • "Dernières nouvelles sport"
+    </div>
+  </div>
+  <div class="typing-indicator" id="typing-indicator">
+    <span class="thinking-dots">Super 5 cherche sur internet</span>
+  </div>
+  <div id="chat-input">
+    <input type="text" id="user-input" placeholder="Pose-moi une question..." maxlength="500">
+    <button id="send-btn">Envoyer</button>
+  </div>
+</div>
+
+<script>
+  // Récupération des éléments du DOM
+  const btn = document.getElementById("super5-btn");
+  const chat = document.getElementById("super5-chat");
+  const sendBtn = document.getElementById("send-btn");
+  const input = document.getElementById("user-input");
+  const messages = document.getElementById("chat-messages");
+  const typingIndicator = document.getElementById("typing-indicator");
+
+  /**
+   * Gère l'ouverture et la fermeture de la fenêtre du chat.
+   * Lorsque le bouton est cliqué, la visibilité de la fenêtre est basculée.
+   * Si la fenêtre devient visible, le focus est mis sur le champ de saisie.
+   */
+  btn.onclick = () => {
+    const isVisible = chat.style.display === "flex";
+    chat.style.display = isVisible ? "none" : "flex";
+    if (!isVisible) {
+      input.focus();
+    }
+  };
+
+  /**
+   * Ajoute un message à la fenêtre de chat.
+   * @param {string} content - Le contenu du message à afficher.
+   * @param {boolean} [isUser=false] - Indique si le message provient de l'utilisateur (true) ou du bot (false).
+   * @param {boolean} [isSearch=false] - Indique si le message est un indicateur de recherche.
+   */
+  function addMessage(content, isUser = false, isSearch = false) {
+    const messageDiv = document.createElement('div');
+    // Ajoute les classes CSS appropriées en fonction de l'expéditeur et du type de message
+messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'} ${isSearch ? 'search-indicator' : ''}`;
+    
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'message-label';
+    // Définit le texte de l'étiquette (Moi, Super 5, ou Recherche)
+    labelDiv.textContent = isUser ? 'Moi' : (isSearch ? '🔍 Recherche' : 'Super 5');
+    
+    const contentDiv = document.createElement('div');
+    // Remplace les retours à la ligne par des balises <br> pour un affichage correct
+    contentDiv.innerHTML = content.replace(/\n/g, '<br>');
+    
+    // Ajoute l'étiquette et le contenu au message
+    messageDiv.appendChild(labelDiv);
+    messageDiv.appendChild(contentDiv);
+    // Ajoute le message à la zone des messages
+    messages.appendChild(messageDiv);
+    
+    // Fait défiler la fenêtre de chat vers le bas pour afficher le nouveau message
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  /**
+   * Détecte le type de question posée par l'utilisateur.
+   * Le chatbot est spécialisé dans les événements. Les questions hors sujet sont identifiées.
+   * @param {string} message - Le message de l'utilisateur.
+   * @returns {string} - 'events' si la question est liée aux événements, 'off_topic' sinon.
+   */
+  function detectQuestionType(message) {
+    const lowerMessage = message.toLowerCase();
+    
+    // Mots-clés principaux liés aux événements
+    const eventKeywords = [
+      'événement', 'événements', 'concert', 'concerts', 'festival', 'festivals', 
+      'spectacle', 'spectacles', 'exposition', 'expositions', 'conférence', 'conférences',
+      'atelier', 'ateliers', 'sport', 'match', 'matchs', 'billet', 'billets', 
+      'inscription', 'inscriptions', 'agenda', 'calendrier', 'prochain', 'prochains', 
+      'à venir', 'où aller', 'que faire', 'activité', 'activités', 'sortir', 'sortie',
+      'musique', 'charité', 'bénéfice', 'collecte', 'fête', 'gala', 'vernissage', 'salon', 'foire', 'compétition', 'course', 'tournoi', 'danse', 'théâtre', 'humour', 'cinéma', 'projection', 'lecture', 'dédicace', 'marché', 'brocante', 'vide-grenier', 'visite', 'balade', 'randonnée', 'dégustation', 'gastronomie', 'cuisine', 'bien-être', 'yoga', 'méditation', 'détente', 'famille', 'enfants', 'jeune public', 'gratuit', 'payant', 'réservation', 'billetterie', 'programme', 'horaire', 'lieu', 'adresse', 'ville', 'région', 'département', 'pays'
+    ];
+    
+    // Mots-clés temporels souvent associés aux événements
+    const timeKeywords = [
+      'aujourd\'hui', 'demain', 'cette semaine', 'ce week-end', 'ce mois-ci', 
+      'prochaine semaine', 'prochain mois', 'date', 'heure', 'quand', 'jour', 'soir', 'matin', 'après-midi'
+    ];
+
+    // Vérifie si la question contient des mots-clés d'événements ou une combinaison événement/temps
+    const isEventRelated = eventKeywords.some(keyword => lowerMessage.includes(keyword)) ||
+                           (eventKeywords.some(keyword => lowerMessage.includes(keyword.split(' ')[0])) && 
+                            timeKeywords.some(keyword => lowerMessage.includes(keyword)));
+
+    if (isEventRelated) {
+      return 'events';
+    }
+    
+    // Mots-clés pour identifier les questions hors sujet (météo, actualités générales, etc.)
+    const offTopicKeywords = [
+      'météo', 'temps', 'température', 'pluie', 'soleil', 'nuage', 'prévision', 
+      'actualité', 'actualités', 'nouvelles', 'news', 'dernière', 'qu\'est-ce qui se passe', 
+      'qui es-tu', 'comment vas-tu', 'bonjour', 'merci', 'salut', 'parle-moi de', 
+      'définition', 'calcul', 'histoire', 'recette', 'blague', 'film', 'musique', 
+      'livre', 'personne', 'lieu', 'adresse', 'téléphone', 'email', 'site web', 
+      'entreprise', 'produit', 'service', 'prix', 'acheter', 'vendre', 
+      'comment faire', 'pourquoi', 'où', 'qui', 'quoi', 'combien'
+    ];
+
+    // Si la question contient un mot-clé hors sujet, elle est classée comme telle
+    if (offTopicKeywords.some(keyword => lowerMessage.includes(keyword))) {
+      return 'off_topic';
+    }
+    
+    // Par défaut, si aucun mot-clé d'événement n'est trouvé, c'est hors sujet
+    return 'off_topic';
+  }
+
+  /**
+   * Simule une recherche sur le web et retourne une réponse basée sur le type de question.
+   * Inclut des réponses spécifiques pour différents types d'événements et des réponses hors sujet.
+   * @param {string} query - La requête de l'utilisateur.
+   * @param {string} type - Le type de question ('events' ou 'off_topic').
+   * @returns {Promise<string>} - Une promesse qui résout avec la réponse du bot.
+   */
+  async function searchWeb(query, type) {
+    // Simulation d'un délai de recherche réaliste (entre 2 et 4 secondes)
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
+    
+    // Réponses pré-définies du chatbot
+    const responses = {
+      events: {
+        'concert': [
+          "🎵 *Concert de Jazz envoûtant !\n\nVenez vibrer au rythme du jazz avec le groupe 'Blue Notes' !\n🗓 **Date :* Samedi 29 juin 2024\n⏰ *Heure :* 20h30\n📍 *Lieu :* Le Duc des Lombards, Paris\n✨ Une soirée inoubliable vous attend ! Réservez vite vos places !",
+          "🎶 *Festival de Musique du Monde - Un voyage sonore !\n\nDécouvrez des artistes venus des quatre coins du globe !\n🗓 **Date :* Du 12 au 14 juillet 2024\n⏰ *Heure :* À partir de 18h00 chaque jour\n📍 *Lieu :* Parc de la Villette, Paris\n🌟 Une expérience culturelle riche et festive à ne pas manquer !",
+          "🎤 *Soirée Karaoké Géant - Libérez la star en vous !\n\nChantez vos tubes préférés dans une ambiance survoltée !\n🗓 **Date :* Vendredi 5 juillet 2024\n⏰ *Heure :* 21h00\n📍 *Lieu :* Le Blind Spot, Lyon\n🎉 Fous rires et bonne humeur garantis !"
+        ],
+        'festival': [
+          "🎪 *Festival des Arts de Rue - Émerveillement garanti !\n\nDes spectacles époustouflants pour petits et grands !\n🗓 **Date :* Du 1er au 3 août 2024\n⏰ *Heure :* Toute la journée\n📍 *Lieu :* Centre-ville de La Rochelle\n🤩 Préparez-vous à être bluffés par des performances incroyables !",
+          "🎉 *Festival de la Bière Artisanale - Santé !\n\nDégustez des bières uniques et rencontrez les brasseurs !\n🗓 **Date :* Samedi 20 juillet 2024\n⏰ *Heure :* 14h00 - 22h00\n📍 *Lieu :* Halle de la Machine, Toulouse\n🍻 Une ambiance conviviale et des saveurs inédites !"
+        ],
+        'sport': [
+          "⚽ *Match de Football - Derby au sommet !\n\nAssistez à un match palpitant entre les deux équipes rivales de la ville !\n🗓 **Date :* Dimanche 7 juillet 2024\n⏰ *Heure :* 17h00\n📍 *Lieu :* Stade Vélodrome, Marseille\n🔥 L'ambiance sera électrique !",
+          "🏃‍♀ *Course Solidaire 'Courir pour l'Espoir' - Un pas pour la bonne cause !\n\nParticipez à cette course caritative et soutenez une belle cause !\n🗓 **Date :* Samedi 13 juillet 2024\n⏰ *Heure :* Départ 9h00\n📍 *Lieu :* Bois de Boulogne, Paris\n💖 Un moment de partage et d'effort pour un impact positif !"
+        ],
+        'exposition': [
+          "🎨 *Exposition 'L'Art et la Lumière' - Une expérience visuelle unique !\n\nPlongez dans un univers où l'art rencontre la technologie !\n🗓 **Date :* Jusqu'au 30 septembre 2024\n⏰ *Heure :* 10h00 - 18h00 (fermé le lundi)\n📍 *Lieu :* Grand Palais Immersif, Paris\n✨ Une exposition fascinante qui éveillera vos sens !",
+          "🏛 *Rétrospective 'Égypte Ancienne' - Voyage dans le temps !\n\nDécouvrez les trésors des pharaons et les mystères de l'Égypte !\n🗓 **Date :* Du 1er août au 31 décembre 2024\n⏰ *Heure :* 9h30 - 17h30\n📍 *Lieu :* Musée du Louvre, Paris\n🌟 Une occasion rare d'explorer une civilisation millénaire !"
+        ],
+        'atelier': [
+          "💡 *Atelier Créatif 'Fabrique ton Robot' - L'ingénieur en herbe !\n\nInitiez-vous à la robotique et construisez votre propre robot !\n🗓 **Date :* Mercredi 10 juillet 2024\n⏰ *Heure :* 14h00 - 17h00\n📍 *Lieu :* Cité des Sciences et de l'Industrie, Paris\n🧠 Une activité ludique et éducative pour les curieux de technologie !",
+          "🧘‍♀ *Atelier Yoga et Méditation en Plein Air - Respiration et Sérénité !\n\nReconnectez-vous avec la nature et trouvez la paix intérieure !\n🗓 **Date :* Tous les dimanches de juillet\n⏰ *Heure :* 9h00 - 10h30\n📍 *Lieu :* Parc des Buttes-Chaumont, Paris\n🌸 Un moment de détente absolue pour commencer la journée en pleine forme !"
+        ],
+        'charity': [
+          "🤝 *Gala de Bienfaisance 'Un Cœur pour Tous' - Une soirée pour changer des vies !\n\nSoutenez une cause noble lors d'un dîner de gala exceptionnel !\n🗓 **Date :* Samedi 6 juillet 2024\n⏰ *Heure :* 19h00\n📍 *Lieu :* Pavillon Gabriel, Paris\n❤ Votre présence fera la différence !",
+          "🌳 *Journée de Nettoyage de la Forêt - Agissons pour la planète !\n\nParticipez à cette initiative écologique et aidez à préserver nos espaces verts !\n🗓 **Date :* Dimanche 21 juillet 2024\n⏰ *Heure :* 9h00 - 12h00\n📍 *Lieu :* Forêt de Fontainebleau (point de rendez-vous communiqué à l'inscription)\n🌍 Un geste simple pour un impact énorme !"
+        ],
+        'default': [
+          "🔍 *Super ! Voici un événement qui pourrait vous plaire :\n\n• **Fête de Quartier Animée !\n🗓 **Date :* Samedi 29 juin 2024\n⏰ *Heure :* 10h00 - 18h00\n📍 *Lieu :* Place du Marché, Bordeaux\n🎉 Au programme : musique, stands gourmands et animations pour tous ! Une excellente occasion de profiter de l'ambiance locale !",
+          "✨ *Découvrez cet événement passionnant :\n\n• **Projection en Plein Air 'Cinéma sous les Étoiles'\n🗓 **Date :* Vendredi 5 juillet 2024\n⏰ *Heure :* 22h00\n📍 *Lieu :* Parc de Saint-Cloud, Saint-Cloud\n🍿 Apportez votre plaid et profitez d'un film culte sous le ciel étoilé ! Une soirée magique en perspective !",
+          "🌟 *Ne manquez pas cet événement unique :\n\n• **Marché des Créateurs Locaux\n🗓 **Date :* Dimanche 14 juillet 2024\n⏰ *Heure :* 9h00 - 17h00\n📍 *Lieu :* Cours Saleya, Nice\n🛍 Trouvez des trésors artisanaux et soutenez les talents de la région ! Une belle sortie pour toute la famille !"
+        ]
+      },
+      off_topic: [
+        "🤖 Désolé, je suis un chatbot spécialisé dans les événements. Je ne peux répondre qu'aux questions concernant les concerts, festivals, expositions, etc. Pour d'autres sujets, je ne suis pas programmé pour vous aider.",
+        "🚫 Mon domaine d'expertise est limité aux événements. Je ne peux pas vous fournir d'informations sur la météo, les actualités générales ou d'autres sujets. N'hésitez pas si vous avez une question sur un événement !",
+        "😅 Je suis conçu pour vous aider à trouver des informations sur les événements. Les questions en dehors de ce cadre ne sont pas dans mes compétences. Concentrons-nous sur les événements !",
+        "❌ Je suis un chatbot événementiel. Je ne peux pas vous aider avec cette question. Veuillez me poser une question liée aux événements.",
+        "🤔 Ma fonction principale est de vous informer sur les événements. Je ne suis pas en mesure de traiter les requêtes générales. Pouvez-vous reformuler votre question en lien avec un événement ?"
+      ]
+    };
+
+    // Sélectionne la catégorie de réponse appropriée en fonction du type de question
+    let responseCategory = responses[type];
+    
+    // Si le type est 'events', affine la réponse en fonction de mots-clés spécifiques dans la requête
+    if (type === 'events') {
+      if (query.includes('concert') || query.includes('musique') || query.includes('jazz') || query.includes('rock') || query.includes('pop') || query.includes('électro')) {
+        responseCategory = responses.events.concert;
+      } else if (query.includes('festival') || query.includes('fête')) {
+        responseCategory = responses.events.festival;
+      } else if (query.includes('sport') || query.includes('match') || query.includes('course') || query.includes('compétition') || query.includes('tournoi')) {
+        responseCategory = responses.events.sport;
+      } else if (query.includes('exposition') || query.includes('salon') || query.includes('musée') || query.includes('vernissage') || query.includes('foire')) {
+        responseCategory = responses.events.exposition;
+      } else if (query.includes('atelier') || query.includes('conférence') || query.includes('cours') || query.includes('séminaire') || query.includes('lecture')) {
+        responseCategory = responses.events.atelier;
+      } else if (query.includes('charité') || query.includes('bénéfice') || query.includes('solidaire') || query.includes('collecte') || query.includes('gala')) {
+        responseCategory = responses.events.charity;
+      } else {
+        responseCategory = responses.events.default; // Réponse par défaut pour les événements
+      }
+    }
+    
+    // Retourne une réponse aléatoire de la catégorie sélectionnée
+    return responseCategory[Math.floor(Math.random() * responseCategory.length)];
+  }
+
+  /**
+   * Fonction de limitation (actuellement non utilisée, la logique est dans detectQuestionType).
+   * Maintenue pour la structure du code.
+   * @param {string} message - Le message de l'utilisateur.
+   * @returns {null} - Retourne toujours null car la limitation est gérée ailleurs.
+   */
+  function checkLimitations(message) {
+    // La logique de limitation est maintenant gérée par detectQuestionType
+    return null; 
+  }
+
+  /**
+   * Gère l'envoi d'un message par l'utilisateur.
+   * Désactive le champ de saisie et le bouton, ajoute le message de l'utilisateur,
+   * détecte le type de question, affiche un indicateur de recherche si nécessaire,
+   * simule une recherche web et affiche la réponse du bot.
+   * Réactive les contrôles après le traitement.
+   */
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return; // Ne fait rien si le champ est vide
+
+    // Désactiver le bouton et l'input pendant le traitement pour éviter les envois multiples
+    sendBtn.disabled = true;
+    input.disabled = true;
+    
+    // Ajoute le message de l'utilisateur à la fenêtre de chat
+    addMessage(text, true);
+    input.value = ""; // Efface le champ de saisie
+    
+    // Détecte le type de question posée par l'utilisateur
+    const questionType = detectQuestionType(text);
+    
+    // Affiche l'indicateur de recherche si la question est liée aux événements
+    if (questionType === 'events') {
+      typingIndicator.style.display = 'block';
+      addMessage("Recherche d'informations actuelles en cours...", false, true);
+    }
+    
+    try {
+      // Appelle la fonction de recherche web ou obtient une réponse hors sujet
+      const response = await searchWeb(text, questionType);
+      addMessage(response); // Affiche la réponse du bot
+      
+    } catch (error) {
+      // Gère les erreurs lors de la recherche
+      addMessage("🤖 Désolé, je rencontre des difficultés pour accéder aux informations en temps réel. Peux-tu reformuler ta question ?");
+    } finally {
+      // Réactive les contrôles et remet le focus sur le champ de saisie
+      sendBtn.disabled = false;
+      input.disabled = false;
+      typingIndicator.style.display = 'none';
+      input.focus();
+    }
+  }
+
+  // Événements
+  // Attache la fonction sendMessage au clic sur le bouton d'envoi
+  sendBtn.onclick = sendMessage;
+  
+  // Attache la fonction sendMessage à la touche 'Entrée' dans le champ de saisie
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { // Vérifie si la touche 'Entrée' est pressée sans 'Shift'
+      e.preventDefault(); // Empêche le comportement par défaut (saut de ligne)
+      sendMessage();
+    }
+  });
+
+  // Ferme le chat en cliquant à l'extérieur de la fenêtre du chat ou du bouton
+  document.addEventListener('click', (e) => {
+    if (!chat.contains(e.target) && !btn.contains(e.target) && chat.style.display === 'flex') {
+      chat.style.display = 'none';
+    }
+  });
+
+  // Affiche un message de bienvenue avec des suggestions après un court délai
+  setTimeout(() => {
+    addMessage("💡 *Conseil :* Pour les événements musicaux, essaie : <em>'Quels concerts ont lieu à Paris cette semaine ?'</em>", false);
+  }, 2000);
+</script>
+</body>
+</html>

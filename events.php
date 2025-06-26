@@ -1,5 +1,6 @@
 <?php
-session_start();
+if (session_status()==PHP_SESSION_NONE)
+    session_start();
 
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
@@ -7,12 +8,42 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once 'functions.php';
+$accessKey = '7oQvM8MBK3uzNSxw1FWEKeAtxfqn_YywjXnZM0dLKmc';
 
-$eventbriteToken = 'TOFZBXFUQQXETDXG6SFH';
-$searchCity = isset($_GET['ville']) ? trim($_GET['ville']) : '';
+// Fonction pour obtenir une image aléatoire depuis Unsplash en fonction du titre
+function getUnsplashImageUrl($query, $accessKey) {
+    $url = "https://api.unsplash.com/photos/random?query=" . urlencode($query) . "&client_id=" . $accessKey . "&orientation=landscape";
 
-$events = fetchEventbriteEvents($eventbriteToken, $searchCity);
+    $opts = [
+        "http" => [
+            "method" => "GET",
+            "header" => "Accept: application/json\r\n"
+        ],
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ],
+    ];
+
+    $context = stream_context_create($opts);
+    $response = @file_get_contents($url, false, $context);
+
+    if (!$response) return null;
+
+    $data = json_decode($response, true);
+    return $data['urls']['regular'] ?? null;
+}
+
+// Charger les événements depuis le JSON
+$events = json_decode(file_get_contents(__DIR__ . '/data/events.json'), true);
+
+// Filtrer les événements si une ville est précisée
+$search = isset($_GET['ville']) ? strtolower(trim($_GET['ville'])) : '';
+if ($search !== '') {
+    $events = array_filter($events, function ($event) use ($search) {
+        return strpos(strtolower($event['lieu']), $search) !== false;
+    });
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +54,16 @@ $events = fetchEventbriteEvents($eventbriteToken, $searchCity);
   <title>EventMatch – Événements</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Cache par défaut tous les événements */
+    .event-card {
+      display: none;
+    }
+    /* Affiche uniquement ceux avec la classe visible */
+    .event-card.visible {
+      display: block !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -32,6 +73,7 @@ $events = fetchEventbriteEvents($eventbriteToken, $searchCity);
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
+    
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
@@ -56,29 +98,30 @@ $events = fetchEventbriteEvents($eventbriteToken, $searchCity);
 </section>
 
 <div class="container my-5">
+  <!-- Barre de recherche -->
   <form method="get" class="mb-4">
     <div class="input-group">
-      <input type="text" name="ville" class="form-control" placeholder="Rechercher une ville..." value="<?= htmlspecialchars($searchCity) ?>" />
+      <input type="text" name="ville" class="form-control" placeholder="Rechercher une ville..." value="<?= htmlspecialchars($search) ?>" />
       <button class="btn btn-purple" type="submit">Rechercher</button>
     </div>
   </form>
 
+  <!-- Résultats -->
   <div class="row" id="eventsContainer">
     <?php if (!empty($events)): ?>
       <?php foreach ($events as $event): ?>
         <?php
-          $title = $event['name']['text'] ?? 'Titre indisponible';
-          $date = isset($event['start']['local']) ? date('Y-m-d H:i', strtotime($event['start']['local'])) : 'Date non spécifiée';
-          $venue = $event['venue']['address']['localized_address_display'] ?? 'Lieu non spécifié';
-          $imageUrl = $event['logo']['url'] ?? 'img/fallback.jpg';
+          $imageUrl = getUnsplashImageUrl($event['titre'], $accessKey);
+          if (!$imageUrl) $imageUrl = 'img/fallback.jpg';
         ?>
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4 event-card">
           <div class="card shadow-sm h-100">
-            <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($title) ?>" class="card-img-top" style="object-fit: cover; height: 200px;" />
+            <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($event['titre']) ?>" class="card-img-top" style="object-fit: cover; height: 200px;" />
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title"><?= htmlspecialchars($title) ?></h5>
-              <p class="card-text"><strong>Lieu :</strong> <?= htmlspecialchars($venue) ?></p>
-              <p class="card-text"><strong>Date :</strong> <?= htmlspecialchars($date) ?></p>
+              <h5 class="card-title"><?= htmlspecialchars($event['titre']) ?></h5>
+              <p class="card-text"><strong>Lieu :</strong> <?= htmlspecialchars($event['lieu']) ?></p>
+              <p class="card-text"><strong>Date :</strong> <?= htmlspecialchars($event['date']) ?></p>
+              <p class="card-text flex-grow-1"><?= htmlspecialchars($event['description']) ?></p>
               <a href="event-details.php?id=<?= urlencode($event['id']) ?>" class="btn btn-outline-purple mt-auto">Voir détails</a>
             </div>
           </div>
@@ -88,6 +131,13 @@ $events = fetchEventbriteEvents($eventbriteToken, $searchCity);
       <p class="text-center">Aucun événement trouvé pour cette ville.</p>
     <?php endif; ?>
   </div>
+
+  <!-- Boutons voir plus / voir moins -->
+  <div class="text-center my-4">
+    <button id="loadMoreBtn" class="btn btn-outline-purple">Voir plus d'événements</button>
+    <button id="loadLessBtn" class="btn btn-outline-secondary" style="display:none;">Voir moins</button>
+  </div>
+
 </div>
 
 <footer class="text-center footer-purple">
@@ -95,5 +145,39 @@ $events = fetchEventbriteEvents($eventbriteToken, $searchCity);
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const events = document.querySelectorAll('.event-card');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const loadLessBtn = document.getElementById('loadLessBtn');
+    const perPage = 6;
+    let visibleCount = 0;
+
+    function showEvents(count) {
+      events.forEach((event, i) => {
+        if (i < count) {
+          event.classList.add('visible');
+        } else {
+          event.classList.remove('visible');
+        }
+      });
+      visibleCount = count;
+
+      loadMoreBtn.style.display = (visibleCount >= events.length) ? 'none' : 'inline-block';
+      loadLessBtn.style.display = (visibleCount > perPage) ? 'inline-block' : 'none';
+    }
+
+    showEvents(perPage);
+
+    loadMoreBtn.addEventListener('click', () => {
+      showEvents(Math.min(visibleCount + perPage, events.length));
+    });
+
+    loadLessBtn.addEventListener('click', () => {
+      showEvents(perPage);
+    });
+  });
+</script>
+
 </body>
 </html>

@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "titre": "Concert Pop Live",
+    "date": "2025-06-28",
+    "lieu": "Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "description": "Un concert pop en plein air avec des artistes renommés."
+  },
+  {
+    "id": 2,
+    "titre": "Festival Street Food",
+    "date": "2025-07-02",
+    "lieu": "Marseille",
+    "lat": 43.2965,
+    "lng": 5.3698,
+    "description": "Découvrez les saveurs du monde dans les rues de Marseille."
+  },
+  {
+    "id": 3,
+    "titre": "Exposition d'art moderne",
+    "date": "2025-06-30",
+    "lieu": "Lyon",
+    "lat": 45.7640,
+    "lng": 4.8357,
+    "description": "Une exposition exceptionnelle présentant des œuvres contemporaines."
+  },
+  {
+    "id": 4,
+    "titre": "Salon du Livre",
+    "date": "2025-07-10",
+    "lieu": "Toulouse",
+    "lat": 43.6047,
+    "lng": 1.4442,
+    "description": "Rencontrez vos auteurs préférés et découvrez de nouveaux livres."
+  },
+  {
+    "id": 5,
+    "titre": "Course cycliste",
+    "date": "2025-07-20",
+    "lieu": "Nice",
+    "lat": 43.7102,
+    "lng": 7.2620,
+    "description": "Une course cycliste pour amateurs et professionnels."
+  },
+  {
+    "id": 6,
+    "titre": "Festival Jazz",
+    "date": "2025-08-05",
+    "lieu": "Bordeaux",
+    "lat": 44.8378,
+    "lng": -0.5792,
+    "description": "Un festival de jazz avec des musiciens internationaux."
+  },
+  {
+    "id": 7,
+    "titre": "Marché de Noël",
+    "date": "2025-12-15",
+    "lieu": "Strasbourg",
+    "lat": 48.5734,
+    "lng": 7.7521,
+    "description": "Ambiance féérique et artisanat local."
+  },
+  {
+    "id": 8,
+    "titre": "Conférence Tech",
+    "date": "2025-09-22",
+    "lieu": "Lille",
+    "lat": 50.6292,
+    "lng": 3.0573,
+    "description": "Les dernières innovations dans le secteur tech."
+  },
+  {
+    "id": 9,
+    "titre": "Théâtre contemporain",
+    "date": "2025-10-11",
+    "lieu": "Nantes",
+    "lat": 47.2184,
+    "lng": -1.5536,
+    "description": "Pièce jouée par une troupe renommée."
+  },
+  {
+    "id": 10,
+    "titre": "Expo photo urbaine",
+    "date": "2025-11-01",
+    "lieu": "Montpellier",
+    "lat": 43.6108,
+    "lng": 3.8767,
+    "description": "Photographies sur le thème de la ville."
+  }
+]
