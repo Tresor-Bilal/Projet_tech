@@ -1,93 +1,140 @@
-# Projet_tech
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# EventMatch – Project Tech
 
 ## Project Overview
 
-**Projet_tech** is a modern web platform that helps users discover, explore, and participate in events. It includes features for event browsing, detailed event pages, user registration/login, and interactive maps for location-based event discovery.
+EventMatch is a web platform designed to help users discover, explore, and participate in local events. The platform allows users to:
 
-The platform is built with **PHP, HTML, CSS, JavaScript**, and integrates APIs such as **Unsplash** for dynamic images. The front-end uses **Bootstrap 5** for responsive and professional styling.
+* Browse upcoming events with images and details.
+* Register and log in to create a personalized experience.
+* View events on a map and access detailed pages.
+* Interact with features such as a chatbot for recommendations.
+
+The project is built with **PHP, MySQL, and Bootstrap**, with front-end enhancements for a professional look and responsive design.
 
 ---
 
 ## Features
 
-* User registration and login system with password hashing
-* Event listing with a carousel of featured events
-* Event detail pages with images from Unsplash
-* Interactive event map using Leaflet.js
-* Responsive design for desktop and mobile
-* Clean, professional user interface with custom styling
+* User authentication (register/login)
+* Event listings with carousel and cards
+* Event details page with Unsplash images
+* Interactive map of events
+* Contact/chatbot integration
+* Responsive, professional UI
 
 ---
 
-## Installation
+## Getting Started
 
-1. Clone the repository:
+### Prerequisites
+
+* PHP >= 7.4
+* MySQL or MariaDB
+* Apache / Nginx server (MAMP/XAMPP for local setup)
+* Composer (optional for future dependency management)
+
+---
+
+### Installation
+
+1. **Clone the repository**
 
 ```bash
 git clone https://github.com/Tresor-Bilal/Projet_tech.git
 cd Projet_tech
 ```
 
-2. Set up a local PHP server (e.g., XAMPP, MAMP, WAMP).
-3. Import the database (if you have one) or ensure your `db.php` connects to your MySQL database.
-4. Open your project in a browser at `http://localhost/Projet_tech/`.
+2. **Import the database**
+
+* Import `db/eventmatch.sql` into your MySQL server:
+
+```bash
+# Using MySQL CLI
+mysql -u your_user -p your_database < db/eventmatch.sql
+```
+
+* Or use **phpMyAdmin / Adminer** to import the SQL file.
+
+3. **Configure database connection**
+
+* Edit `db.php` (or `config.php`) and update your database credentials:
+
+```php
+$host = 'localhost';
+$db   = 'your_database';
+$user = 'your_user';
+$pass = 'your_password';
+```
+
+4. **Start your local server**
+
+* Open `index.php` in your browser via MAMP/XAMPP or `php -S localhost:8000` in terminal.
 
 ---
 
-## Usage
+### Usage
 
-* Register a new user account via the **Register** page.
-* Login to access event details and profile features.
-* Browse events from the homepage carousel or the events list page.
-* Click on events to view details and see the location on the map.
-
----
-
-## Screenshots
-
-*(You can add screenshots here to make your README more visual)*
-
-* Homepage with featured events carousel
-* Event detail page
-* User registration/login forms
-* Interactive map view
+* Register a new account or log in using existing credentials.
+* Browse the home page carousel for featured events.
+* Click on an event card to view details and map location.
+* Explore the chatbot for event recommendations.
 
 ---
 
-## Technologies Used
+### Project Structure
 
-* **Backend:** PHP
-* **Frontend:** HTML, CSS, JavaScript, Bootstrap 5
-* **Database:** MySQL / MariaDB
-* **APIs:** Unsplash API for event images
-* **Maps:** Leaflet.js with OpenStreetMap
+```
+Projet_tech/
+│
+├─ CSS/                # Stylesheets
+├─ db/                 # Database export (eventmatch.sql)
+├─ img/                # Images
+├─ includes/           # Header and footer templates
+├─ data/               # JSON event data
+├─ index.php           # Homepage
+├─ events.php          # Event listings
+├─ event-details.php   # Event detail page
+├─ register.php        # User registration
+├─ login.php           # User login
+├─ logout.php          # Logout script
+└─ README.md           # Project documentation
+```
 
 ---
 
-## Contributing
+### Contributing
 
-We welcome contributions! If you want to contribute:
+We welcome contributions! To contribute:
 
 1. Fork the repository
-2. Create a new branch (`git checkout -b feature-name`)
-3. Make your changes and commit (`git commit -m "Add feature"`)
-4. Push to your branch (`git push origin feature-name`)
-5. Open a Pull Request
+2. Create a new branch for your feature:
+
+```bash
+git checkout -b feature-name
+```
+
+3. Make your changes
+4. Commit your changes:
+
+```bash
+git commit -m "Add description of your feature"
+```
+
+5. Push your branch and create a Pull Request
 
 ---
 
-## License
+### License
 
-This project is licensed under the **MIT License** – see the [LICENSE](https://opensource.org/licenses/MIT) file for details.
-
----
-
-## Repository Link
-
-**GitHub Repository:** [https://github.com/Tresor-Bilal/Projet_tech.git](https://github.com/Tresor-Bilal/Projet_tech.git)
+This project is open-source. Feel free to reuse and modify according to your needs.
 
 ---
 
-# Projet_tech
+### Contact
+
+Author: **Mbungu Tresor Bilal**
+GitHub: [https://github.com/Tresor-Bilal](https://github.com/Tresor-Bilal)
+
+---
+
