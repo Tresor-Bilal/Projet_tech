@@ -1,140 +1,221 @@
-
-# EventMatch – Project Tech
+# 🎉 EventMatch – Local Event Discovery Platform
 
 ## Project Overview
 
-EventMatch is a web platform designed to help users discover, explore, and participate in local events. The platform allows users to:
+EventMatch is a web platform designed to help users discover, explore, and participate in local events through an intuitive and responsive interface.
 
-* Browse upcoming events with images and details.
-* Register and log in to create a personalized experience.
-* View events on a map and access detailed pages.
-* Interact with features such as a chatbot for recommendations.
+The platform allows users to:
 
-The project is built with **PHP, MySQL, and Bootstrap**, with front-end enhancements for a professional look and responsive design.
+- Browse upcoming events with images and descriptions
+- Register and log in to personalize their experience
+- View event details and locations
+- Discover events through an integrated chatbot
+- Manage their user profile
 
----
-
-## Features
-
-* User authentication (register/login)
-* Event listings with carousel and cards
-* Event details page with Unsplash images
-* Interactive map of events
-* Contact/chatbot integration
-* Responsive, professional UI
+The project is built using **PHP**, **MySQL**, and modern front-end technologies to provide a clean and user-friendly experience.
 
 ---
 
-## Getting Started
+## ✨ Features
+
+- User authentication (registration and login)
+- Event listing system with cards and featured sections
+- Event detail pages with images and descriptions
+- Interactive event discovery
+- Chatbot integration for recommendations
+- User profile management
+- Eventbrite API integration
+- Responsive and modern UI
+
+---
+
+## 🛠️ Technologies Used
+
+- PHP
+- MySQL / MariaDB
+- HTML5
+- CSS3
+- JavaScript
+- Eventbrite API
+- Apache / Nginx
+- Git & GitHub
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-* PHP >= 7.4
-* MySQL or MariaDB
-* Apache / Nginx server (MAMP/XAMPP for local setup)
-* Composer (optional for future dependency management)
+Before running the project, make sure you have:
+
+- PHP >= 7.4
+- MySQL or MariaDB
+- Apache or Nginx server
+- XAMPP / MAMP / Laragon (recommended for local development)
+- A modern web browser
 
 ---
 
-### Installation
+## ⚙️ Installation
 
-1. **Clone the repository**
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Tresor-Bilal/Projet_tech.git
 cd Projet_tech
 ```
 
-2. **Import the database**
+---
 
-* Import `db/eventmatch.sql` into your MySQL server:
+### 2. Create the database
 
-```bash
-# Using MySQL CLI
-mysql -u your_user -p your_database < db/eventmatch.sql
+Open your MySQL server and create a database:
+
+```sql
+CREATE DATABASE eventmatch;
 ```
 
-* Or use **phpMyAdmin / Adminer** to import the SQL file.
+---
 
-3. **Configure database connection**
+### 3. Import the SQL file
 
-* Edit `db.php` (or `config.php`) and update your database credentials:
+Import the database file located in:
+
+```text
+db/eventmatch.sql
+```
+
+Using MySQL CLI:
+
+```bash
+mysql -u your_user -p eventmatch < db/eventmatch.sql
+```
+
+Or import it manually using **phpMyAdmin** or **Adminer**.
+
+---
+
+### 4. Configure database connection
+
+Edit the configuration file:
+
+```text
+config.php
+```
+
+Update your database credentials:
 
 ```php
 $host = 'localhost';
-$db   = 'your_database';
+$db   = 'eventmatch';
 $user = 'your_user';
 $pass = 'your_password';
 ```
 
-4. **Start your local server**
-
-* Open `index.php` in your browser via MAMP/XAMPP or `php -S localhost:8000` in terminal.
-
 ---
 
-### Usage
+### 5. Run the project
 
-* Register a new account or log in using existing credentials.
-* Browse the home page carousel for featured events.
-* Click on an event card to view details and map location.
-* Explore the chatbot for event recommendations.
+Place the project inside your web server directory:
 
----
+- `htdocs/` for XAMPP
+- `www/` for WAMP
+- `Sites/` for MAMP
 
-### Project Structure
+Then open:
 
+```text
+http://localhost/Projet_tech
 ```
+
+---
+
+## 📌 Usage
+
+1. Register a new account or log in.
+2. Browse featured events from the homepage.
+3. Open event details pages for more information.
+4. Explore recommendations using the chatbot.
+5. Update your profile information.
+
+---
+
+## 📂 Project Structure
+
+```text
 Projet_tech/
 │
-├─ CSS/                # Stylesheets
-├─ db/                 # Database export (eventmatch.sql)
-├─ img/                # Images
-├─ includes/           # Header and footer templates
-├─ data/               # JSON event data
-├─ index.php           # Homepage
-├─ events.php          # Event listings
-├─ event-details.php   # Event detail page
-├─ register.php        # User registration
-├─ login.php           # User login
-├─ logout.php          # Logout script
-└─ README.md           # Project documentation
+├── CSS/                  # Stylesheets
+├── data/                 # JSON event data
+├── db/                   # Database export
+├── img/                  # Images and assets
+├── includes/             # Reusable templates
+│
+├── index.php             # Homepage
+├── events.php            # Event listings
+├── event-details.php     # Event details page
+├── profile.php           # User profile
+├── register.php          # User registration
+├── login.php             # User login
+├── logout.php            # Logout script
+├── chatbot.html          # Chatbot interface
+├── eventbrite.php        # Eventbrite integration
+├── config.php            # Application configuration
+├── db.php                # Database connection
+├── functions.php         # Helper functions
+└── README.md             # Project documentation
 ```
 
 ---
 
-### Contributing
+## 🔒 Security Notes
 
-We welcome contributions! To contribute:
+- User authentication system implemented
+- Database credentials centralized in configuration files
+- Sensitive API keys should be stored securely
+- SQL database integration handled through PHP
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+To contribute:
 
 1. Fork the repository
-2. Create a new branch for your feature:
+2. Create a new branch
 
 ```bash
 git checkout -b feature-name
 ```
 
 3. Make your changes
-4. Commit your changes:
+4. Commit your work
 
 ```bash
-git commit -m "Add description of your feature"
+git commit -m "Add new feature"
 ```
 
-5. Push your branch and create a Pull Request
+5. Push your branch
+
+```bash
+git push origin feature-name
+```
+
+6. Open a Pull Request
 
 ---
 
-### License
+## 👨‍💻 Author
 
-This project is open-source. Feel free to reuse and modify according to your needs.
+**Mbungu Tresor Bilal**
 
----
-
-### Contact
-
-Author: **Mbungu Tresor Bilal**
-GitHub: [https://github.com/Tresor-Bilal](https://github.com/Tresor-Bilal)
+GitHub: https://github.com/Tresor-Bilal
 
 ---
+
+## 📄 License
+
+This project was developed for educational purposes.
 
