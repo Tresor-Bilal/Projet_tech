@@ -61,8 +61,8 @@ Before running the project, make sure you have:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Tresor-Bilal/Projet_tech.git
-cd Projet_tech
+git clone https://github.com/Tresor-Bilal/EventMatch.git
+cd EventMatch
 ```
 
 ---
